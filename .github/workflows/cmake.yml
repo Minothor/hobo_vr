@@ -2,9 +2,9 @@ name: CMake
 
 on:
   push:
-    branches: [ master ]
+    branches: [ ${{ secrets.RELEASE_BRANCH }} ]
   pull_request:
-    branches: [ master ]
+    branches: [ ${{ secrets.RELEASE_BRANCH }} ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -22,7 +22,9 @@ jobs:
 
     steps:
     - name: Clone repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ secrets.RELEASE_BRANCH }}
       
     - name: Clone submodules
       run: git submodule init && git submodule update
