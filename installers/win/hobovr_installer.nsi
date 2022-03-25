@@ -3,13 +3,22 @@
 # 	Nsisunz: https://nsis.sourceforge.io/Nsisunz_plug-in
 #	ExecDos: https://nsis.sourceforge.io/ExecDos_plug-in
 #	Locate: https://nsis.sourceforge.io/Locate_plugin
+#   Registry: https://nsis.sourceforge.io/Registry_plug-in
 #   Download the zip files from each of those and copy the contents of the plugin.zip/Plugins directory to program files/NSIS/plugins
 !include nsDialogs.nsh
 !include MUI2.nsh
 !include "winmessages.nsh"
 !include LogicLib.nsh
 !include "Locate.nsh"
+!include registry.nsh
+!include x64.nsh
 
+#---------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+
+
+
+#---------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------
 
 ; https://nsis.sourceforge.io/StrContains
@@ -66,6 +75,9 @@ FunctionEnd
 
 ; FindPython - SimLeek
 ; Searches for Python 3.7-3.9 and returns the EXE and Version if found.
+
+; Perhaps replace with Registry and IntCmp?
+; https://nsis.sourceforge.io/Docs/Chapter4.html#intcmp
 
 Var pythonExe
 Var pythonVer
@@ -160,6 +172,38 @@ FunctionEnd
 #---------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------
 
+; FindSteam - Minothor
+; Searches the registry for the Steam installation directory and checks that Steam VR is installed.
+
+; Useful? https://nsis.sourceforge.io/Docs/Chapter4.html#instattribs
+Var steamRegistryKey
+Var steamRegistryKeyType
+Var isSteamInstalled
+Var steamInstallDirectory
+Var VRPathRegEXE
+
+Function EnsureSteam
+
+    ${If} ${Runningx64}
+        StrCpy $steamRegistryKey "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve\Steam"
+    ${Else}
+        StrCpy $steamRegistryKey "HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam"
+    ${EndIf}
+
+    ${registry::KeyExists} $steamRegistryKey $isSteamInstalled
+    IntCmp $isSteamInstalled 0 steamPresent steamNotPresent
+    steamNotPresent:
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Steam installation not found. Please install Steam and re-launch the installer."
+        Quit
+    steamPresent:
+        ${registry::Read} $steamRegistryKey "InstallPath" $steamInstallDirectory $steamRegistryKeyType
+        StrCpy $VRPathRegEXE "$steamInstallDirectory\steamapps\common\SteamVR\bin\win32\vrpathreg.exe"
+
+FunctionEnd
+
+#---------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+
 ; https://nsis.sourceforge.io/NsDialogs_FAQ#How_to_create_two_groups_of_RadioButtons
 
 Var dialog
@@ -228,14 +272,16 @@ Pop $R0
 StrCpy $HobovrZipDownloaded $R0
 StrCmp $HobovrZipDownloaded "OK" 0 hobo_download_failed
 nsisunz::Unzip "$TEMP\hobovr_master.zip" "$INSTDIR"
-	
+
 # Tell Steam where the VR DLLs are
-IfFileExists "C:\Program Files (x86)\Steam\steamapps\common\SteamVR\bin\win32\vrpathreg.exe" PathGood
+Call EnsureSteam
+
+IfFileExists $VRPathRegEXE PathGood
 	MessageBox MB_OK|MB_ICONEXCLAMATION "Steam vr path register exe doesn't exist. has steam and steamvr been installed?"
 	Quit
 PathGood:
-	ExecDos::exec /DETAILED '"C:\Program Files (x86)\Steam\steamapps\common\SteamVR\bin\win32\vrpathreg.exe" adddriver "$INSTDIR\hobo_vr-master\hobovr"' $EXIT_CODE install_log.txt
-	ExecDos::exec /DETAILED '"C:\Program Files (x86)\Steam\steamapps\common\SteamVR\bin\win32\vrpathreg.exe" show' $EXIT_CODE install_log.txt
+	ExecDos::exec /DETAILED '"$VRPathRegEXE" adddriver "$INSTDIR\hobo_vr-master\hobovr"' $EXIT_CODE install_log.txt
+	ExecDos::exec /DETAILED '"$VRPathRegEXE" show' $EXIT_CODE install_log.txt
 
 # Install hobovr virtualreality python bindings
 ExecDos::exec /DETAILED '$pythonExe -m pip install -e "$INSTDIR\hobo_vr-master\bindings\python"' $EXIT_CODE install_log.txt
