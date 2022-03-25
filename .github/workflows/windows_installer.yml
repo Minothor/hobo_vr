@@ -1,0 +1,73 @@
+name: windows-installer
+
+on:
+  workflow_run:
+      workflows:
+      - "CMake"
+      types:
+      - completed
+jobs:
+  make-installer:
+    runs-on: windows-latest
+    steps:
+
+      - name: Download Inetc plugin
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
+          file-name: "Inetc.zip"
+          location: "${{ github.workspace }}"
+          sha256: "88d9dcffbe967df6ee9f5820f8199a673383e581bf650dbc35b94846314b1a4b"
+
+      - name: Extract Inetc plugin
+        run: 7z x "${{ github.workspace }}/Inetc.zip" -o"${{ github.workspace }}/NSIS_Plugins" "Plugins/*" -r
+
+      - name: Download Nsisunz plugin
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: "https://nsis.sourceforge.io/mediawiki/images/1/1c/Nsisunz.zip"
+          file-name: "Nsisunz.zip"
+          location: "${{ github.workspace }}"
+          sha256: "599029776df526def921ea178a6f66325b6f719772c38318e349a5c92a03afe9"
+
+      - name: Extract Nsisunz plugin
+        run: 7z x "${{ github.workspace }}/Nsisunz.zip" -o"${{ github.workspace }}/NSIS_Plugins" "nsisunz/Release/*" -r
+
+      - name: Download ExecDos plugin
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: "https://nsis.sourceforge.io/mediawiki/images/0/0f/ExecDos.zip"
+          file-name: "ExecDos.zip"
+          location: "${{ github.workspace }}"
+          sha256: "a90f00e117f961f97a87d25484e196edb407cb6778c2f0891350bcab97027b74"
+
+      - name: Extract ExecDos plugin
+        run: 7z x "${{ github.workspace }}/ExecDos.zip" -o"${{ github.workspace }}/NSIS_Plugins" "Plugins/*" -r
+
+      - name: Download Locate plugin
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: "https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip"
+          file-name: "Locate.zip"
+          location: "${{ github.workspace }}"
+          sha256: "123ccd0a21512d37f0164d4064fd1404707f00cfdd5a799703ebf1b2b4517f35"
+
+      - name: Extract Locate plugin
+        run: 7z x "${{ github.workspace }}/Locate.zip" -o"${{ github.workspace }}/NSIS_Plugins" "Plugin/*" -r
+
+      - name: Download Registry plugin
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: "https://nsis.sourceforge.io/mediawiki/images/4/47/Registry.zip"
+          file-name: "Registry.zip"
+          location: "${{ github.workspace }}"
+          sha256: "8951a152e1b6addbe2fee953795a992625e860d893b22f928cbf2750c66d6e76"
+
+      - name: Extract Registry plugin
+        run: 7z x "${{ github.workspace }}/Registry.zip" -o"${{ github.workspace }}/NSIS_Plugins" "Desktop/Plugin/*" -r
+
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: ${{ github.workspace }}/installers/win/hobovr_installer.nsi
+          additional-plugin-paths: ${{ github.workspace }}/NSIS_Plugins
