@@ -1,16 +1,24 @@
 name: windows-installer
 
 on:
-  workflow_run:
-      workflows:
-      - "CMake"
-      types:
-      - completed
+  push:
+    tags:
+      - 'v.*-stable'
+    branches:
+      - ${{ secrets.RELEASE_BRANCH }}
 jobs:
+  build-driver:
+    runs-on: windows-latest
+    steps:
+      - name: Build Windows Driver
+        uses: ./.github/workflows/cmake.yml
+        with:
+          platform: windows-latest
+          branch: Release
+          build-type: Release
   make-installer:
     runs-on: windows-latest
     steps:
-
       - name: Download Inetc plugin
         uses: carlosperate/download-file-action@v1.0.3
         with:
