@@ -6,6 +6,36 @@ on:
       - 'v.*-stable'
     branches:
       - ${{ secrets.RELEASE_BRANCH }}
+    inputs:
+      buildType:
+        description: 'Build config'
+        required: false
+        default: 'Release'
+        type: choice
+        options:
+          - Debug
+          - Release
+      branch:
+        description: 'Target branch to build'
+        default: 'master'
+        required: false
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      buildType:
+        description: 'Build config'
+        required: false
+        default: 'Release'
+        type: choice
+        options:
+          - Debug
+          - Release
+      branch:
+        description: 'Target branch to build'
+        default: 'master'
+        required: false
+        type: string
 jobs:
   build-driver:
     runs-on: windows-latest
@@ -14,10 +44,11 @@ jobs:
         uses: ./.github/workflows/cmake.yml
         with:
           platform: windows-latest
-          branch: Release
-          build-type: Release
+          branch: ${{inputs.branch}}
+          build-type: ${{inputs.release}}
   make-installer:
     runs-on: windows-latest
+    needs: build-driver
     steps:
       - name: Download Inetc plugin
         uses: carlosperate/download-file-action@v1.0.3
