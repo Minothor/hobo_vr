@@ -39,13 +39,12 @@ on:
 jobs:
   build-driver:
     runs-on: windows-latest
-    steps:
-      - name: Build Windows Driver
-        uses: ./.github/workflows/cmake.yml
-        with:
-          platform: windows-latest
-          branch: ${{inputs.branch}}
-          build-type: ${{inputs.release}}
+    name: Build Windows Driver
+    uses: ./.github/workflows/cmake.yml
+    with:
+      platform: windows-latest
+      branch: ${{inputs.branch}}
+      build-type: ${{inputs.release}}
   make-installer:
     runs-on: windows-latest
     needs: build-driver
