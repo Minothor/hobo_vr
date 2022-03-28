@@ -5,7 +5,7 @@ on:
     tags:
       - 'v.*-stable'
     branches:
-      - ${{ secrets.RELEASE_BRANCH }}
+      - master
     inputs:
       buildType:
         description: 'Build config'
