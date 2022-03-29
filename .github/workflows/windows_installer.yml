@@ -4,18 +4,13 @@ on:
   push:
     tags:
       - 'v.*-stable'
-    branches:
-      - ${{ secrets.RELEASE_BRANCH }}
 jobs:
   build-driver:
-    runs-on: windows-latest
-    steps:
-      - name: Build Windows Driver
-        uses: ./.github/workflows/cmake.yml
-        with:
-          platform: windows-latest
-          branch: Release
-          build-type: Release
+    uses: ./.github/workflows/cmake.yml
+    with:
+      platform: windows-latest
+      branch: Release
+      build-type: Release
   make-installer:
     runs-on: windows-latest
     steps:
