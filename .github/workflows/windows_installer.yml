@@ -12,6 +12,7 @@ jobs:
       branch: Release
       build-type: Release
   make-installer:
+    needs: build-driver
     runs-on: windows-latest
     steps:
       - name: Download Inetc plugin
