@@ -21,30 +21,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: hobovr-build-windows-latest
-          path: |
-            hobovr 
+          path: ${{ github.workspace }}
 
-      - name: Download Inetc plugin
-        uses: carlosperate/download-file-action@v1.0.3
-        with:
-          file-url: "https://nsis.sourceforge.io/mediawiki/images/c/c9/Inetc.zip"
-          file-name: "Inetc.zip"
-          location: "${{ github.workspace }}"
-          sha256: "88d9dcffbe967df6ee9f5820f8199a673383e581bf650dbc35b94846314b1a4b"
-
-      - name: Extract Inetc plugin
-        run: 7z x "${{ github.workspace }}/Inetc.zip" -o"${{ github.workspace }}/NSIS" "Plugins/*" -r -y
-
-      - name: Download Nsisunz plugin
-        uses: carlosperate/download-file-action@v1.0.3
-        with:
-          file-url: "https://nsis.sourceforge.io/mediawiki/images/1/1c/Nsisunz.zip"
-          file-name: "Nsisunz.zip"
-          location: "${{ github.workspace }}"
-          sha256: "599029776df526def921ea178a6f66325b6f719772c38318e349a5c92a03afe9"
-
-      - name: Extract Nsisunz plugin
-        run: 7z e "${{ github.workspace }}/Nsisunz.zip" -o"${{ github.workspace }}/NSIS/Plugins" "nsisunz/Release/*" -r -y
+      - name: Extract Driver
+        run: 7z x "${{ github.workspace }}\hobovr-build-windows-latest.zip" -o"${{ github.workspace }}/hobovr" -r -y
 
       - name: Download ExecDos plugin
         uses: carlosperate/download-file-action@v1.0.3
@@ -56,17 +36,6 @@ jobs:
 
       - name: Extract ExecDos plugin
         run: 7z x "${{ github.workspace }}/ExecDos.zip" -o"${{ github.workspace }}/NSIS" "Plugins/*" -r -y
-
-      - name: Download Locate plugin
-        uses: carlosperate/download-file-action@v1.0.3
-        with:
-          file-url: "https://nsis.sourceforge.io/mediawiki/images/a/af/Locate.zip"
-          file-name: "Locate.zip"
-          location: "${{ github.workspace }}"
-          sha256: "123ccd0a21512d37f0164d4064fd1404707f00cfdd5a799703ebf1b2b4517f35"
-
-      - name: Extract Locate plugin
-        run: 7z e "${{ github.workspace }}/Locate.zip" -o"${{ github.workspace }}/NSIS/Plugins" "Plugin/*" -r -y
 
       - name: Download Registry plugin
         uses: carlosperate/download-file-action@v1.0.3
