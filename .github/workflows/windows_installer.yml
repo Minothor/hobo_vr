@@ -10,8 +10,8 @@ jobs:
     uses: ./.github/workflows/cmake.yml
     with:
       platform: windows-latest
-      branch: Release
-      build-type: Release
+      branchName: Release
+      buildType: Release
   make-installer:
     needs: build-driver
     runs-on: windows-latest
