@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/cmake.yml
     with:
       platform: windows-latest
-      branchName: Release
+      branchName: master
       buildType: Release
   make-installer:
     needs: build-driver
@@ -27,7 +27,7 @@ jobs:
         run: 7z x "${{ github.workspace }}\hobovr-build-windows-latest.zip" -o"${{ github.workspace }}/hobovr" -r -y
 
       - name: Download ExecDos plugin
-        uses: carlosperate/download-file-action@v1.0.3
+        uses: carlosperate/download-file-action@v1.1.1
         with:
           file-url: "https://nsis.sourceforge.io/mediawiki/images/0/0f/ExecDos.zip"
           file-name: "ExecDos.zip"
@@ -38,7 +38,7 @@ jobs:
         run: 7z x "${{ github.workspace }}/ExecDos.zip" -o"${{ github.workspace }}/NSIS" "Plugins/*" -r -y
 
       - name: Download Registry plugin
-        uses: carlosperate/download-file-action@v1.0.3
+        uses: carlosperate/download-file-action@v1.1.1
         with:
           file-url: "https://nsis.sourceforge.io/mediawiki/images/4/47/Registry.zip"
           file-name: "Registry.zip"
