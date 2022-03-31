@@ -45,7 +45,7 @@ FunctionEnd
 #---------------------------------------------------------------------------------------------------
 
 Name "HoboVR"
-OutFile "hobovr_setup_web.exe"
+OutFile "hobovr_setup.exe"
 XPStyle on
 
 

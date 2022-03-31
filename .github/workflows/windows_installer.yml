@@ -1,19 +1,19 @@
 name: windows-installer
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - "CMake"
+    branches:
+      - "master"
     tags:
-      - 'v.*-stable'
-  workflow_dispatch:
+      - "v.*-stable"
+    types:
+      - "completed"
+    conclusion:
+      - "success"
 jobs:
-  build-driver:
-    uses: ./.github/workflows/cmake.yml
-    with:
-      platform: windows-latest
-      branchName: master
-      buildType: Release
   make-installer:
-    needs: build-driver
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
@@ -53,3 +53,10 @@ jobs:
         with:
           script-file: ${{ github.workspace }}/installers/win/hobovr_installer.nsi
           additional-plugin-paths: ${{ github.workspace }}/NSIS/Plugins
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "hobovr_setup.exe"
+          path: |
+            hobovr
