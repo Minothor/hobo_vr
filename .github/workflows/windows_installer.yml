@@ -3,7 +3,7 @@ name: windows-installer
 on:
   workflow_run:
     workflows:
-      - "CMake"
+      - "Build"
     branches:
       - "master"
     tags:
