@@ -25,6 +25,7 @@ on:
 
 jobs:
   env-setup:
+    skip
     runs-on: ubuntu-latest
     outputs:
       buildType: ${{steps.assign_build_input.outputs.buildType}}
