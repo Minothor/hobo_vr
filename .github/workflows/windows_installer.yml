@@ -4,16 +4,13 @@ on:
   workflow_run:
     workflows:
       - "Build"
-    branches:
-      - "master"
     tags:
       - "v*-stable"
     types:
       - "completed"
-    conclusion:
-      - "success"
 jobs:
   make-installer:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
