@@ -30,7 +30,7 @@
         }
     }
 #endif
-#include <boost/dll.hpp>
+#include <boost/dll>
 
 // #include <shoom.h>
 
