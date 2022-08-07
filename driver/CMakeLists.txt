@@ -115,7 +115,7 @@ set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED)
 
 # actual build instructions
-include_directories(
+target_include_directories(
   ${OPENVR_INCLUDE_DIR}
   ${Boost_INCLUDE_DIR}
   ${SHROOM_INCLUDE_DIR}
