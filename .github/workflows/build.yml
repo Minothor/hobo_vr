@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Check buildType Input
         id: assign_build_input
-        run: echo "::set-output name=buildType::${{(github.event.inputs.buildType||'Release')}}"
+        run: echo "buildType=${{(github.event.inputs.buildType||'Release')}}" >> $GITHUB_OUTPUT
 
       - name: Validate Inputs
         id: check_input_vals
